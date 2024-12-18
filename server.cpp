@@ -4,10 +4,15 @@
 #include<tchar.h>
 #include<thread>
 #include<vector>
+#include <fstream>
 
-#pragma comment(lib, "ws2_32.lib")  // Link the Winsock library
+#pragma comment(lib, "ws2_32.lib")
 using namespace std;
-
+//save chat history
+ofstream logFile("server_chat_history.txt", std::ios::app);
+void LogMessage(const std::string& message) {
+    logFile << message << std::endl;
+}
 
 void InteractWithClient(SOCKET clientSocket, vector<SOCKET>& clients) {
     //send/recieve client
@@ -22,6 +27,9 @@ void InteractWithClient(SOCKET clientSocket, vector<SOCKET>& clients) {
         }
         string message(buffer, bytesrecvd);
         cout << "message from client: " << message << endl;
+
+        // Log the message
+        LogMessage("Client: " + message);
 
         for (auto client : clients) {
             if (client != clientSocket) {
@@ -40,8 +48,8 @@ void InteractWithClient(SOCKET clientSocket, vector<SOCKET>& clients) {
 
 
 int main() {
-    WSADATA wsaData; // Struct stores Winsock details
-    //Socket- "endpoint" through which data is sent and received.
+    WSADATA wsaData; 
+    //Socket- data is sent and received.
     
     // Step 1: Initialize Winsock
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -51,28 +59,20 @@ int main() {
     //cout << "Winsock initialized successfully!" << endl;
 
     // Step 2: Create a socket
-    //SOCKET is a data type in Winsock that represents a socket.
-    SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0); // TCP Socket
-    // AF_INET (Address Family)--- tells the socket to use the IPv4 protocol(the most common network protocol).
-    //SOCK_STREAM              ---It specifies that this is a TCP socket(used for reliable communication).
-    //                            TCP ensures data is delivered correctly and in the right order.
-    //                            If you wanted to use UDP(faster but less reliable), you would use SOCK_DGRAM
+    SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, 0); 
     if (serverSocket == INVALID_SOCKET) {
         cout << "Socket creation failed. " << endl;
         WSACleanup();
         return 1;
     }
-    //cout << "Socket created" << endl;
-    //The serverSocket variable now holds the "telephone number" (descriptor) of the socket.
-    //You can start using this socket to send / receive data or wait for incoming connections.
+    //cout << "Socket created" << endl;.
 
     // Step 3: IP and port
     int port = 12345;
-    sockaddr_in serverAddr; // form where we fill in details like IP address, port number, and protocol.
+    sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = INADDR_ANY; //accept connections from any IP address.
-                                             //If the server has multiple network interfaces(e.g., Ethernet and Wi - Fi), 
-                                             // this allows it to listen on all of them.
+    serverAddr.sin_addr.s_addr = INADDR_ANY; 
+    
     serverAddr.sin_port = htons(port);
     //ip address to binaryy format
     if (InetPton(AF_INET, _T("0.0.0.0"), &serverAddr.sin_addr) != 1) {
@@ -113,8 +113,8 @@ int main() {
         t1.detach();
     }
     
-
     closesocket(serverSocket);
-
+    logFile.close();
+    return 0;
     
 }
