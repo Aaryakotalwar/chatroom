@@ -22,25 +22,25 @@ Clients can send and receive messages in real-time.
 
 **Step 1:**
 
-Compile and Run the Server
+• Copy and paste the server code into a file named server.cpp .
+  
+• Open Microsoft Visual Studio (or another IDE).
 
-Open the server code file in your C++ IDE or compiler.
+• Create a new project for the server code.
 
-Build and run the server code.
+• Add the server.cpp file to the project.
 
-The server will start listening on port 12345.
+• Build the project to compile the server code.
+
+• Start the server executable. The server will start listening on port 12345 and wait for client connections.
+
 
 **Step 2:**
 
-Compile and Run the Client
+• Do same and add client.cpp (multiple clients if you want) to the client project.
 
-Open the client code file in your C++ IDE or compiler.
+•When prompted, enter your chat name. Begin typing messages to participate in the chatroom.
 
-Build and run the client code.
-
-When prompted, enter your desired chat name.
-
-Type messages and press Enter to send them to the chatroom.
 
 # Server Code Breakdown
 
